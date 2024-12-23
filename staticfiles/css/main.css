@@ -1,0 +1,92 @@
+/* Dashboard specific styles */
+.card {
+    background: #ffffff;
+    border-radius: 10px;
+    border: none;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.card-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.display-4 {
+    font-weight: 600;
+    font-size: 2.5rem;
+}
+
+/* Chart container styles */
+canvas {
+    max-width: 100%;
+}
+
+/* Statistics card colors */
+.text-primary {
+    color: #0066ff !important;
+}
+
+.text-success {
+    color: #00a854 !important;
+}
+
+.text-warning {
+    color: #ffba08 !important;
+}
+
+.text-danger {
+    color: #dc3545 !important;
+}
+
+/* Table styles */
+.table thead th {
+    border-top: none;
+    border-bottom: 2px solid #e9ecef;
+    font-weight: 600;
+    color: #495057;
+}
+
+.table td {
+    vertical-align: middle;
+    color: #495057;
+}
+
+/* Badge styles */
+.badge {
+    padding: 0.5em 0.8em;
+    font-weight: 500;
+}
+
+/* Button styles */
+.btn-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-group .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+}
+
+.btn-group .btn i {
+    font-size: 0.875rem;
+}
+
+.text-end {
+    text-align: right;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .display-4 {
+        font-size: 2rem;
+    }
+}
+

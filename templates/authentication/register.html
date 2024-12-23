@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<style>
+    .auth-container {
+        min-height: calc(100vh - 70px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 2rem 0;
+    }
+    .auth-card {
+        width: 100%;
+        max-width: 500px;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    .auth-header {
+        text-align: center;
+        padding: 2rem 1rem;
+        background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+        border-radius: 15px 15px 0 0;
+        color: white;
+    }
+    .auth-body {
+        padding: 2rem;
+    }
+    .form-floating {
+        margin-bottom: 1rem;
+    }
+    .form-control:focus {
+        border-color: #4a90e2;
+        box-shadow: 0 0 0 0.25rem rgba(74, 144, 226, 0.25);
+    }
+    .password-requirements {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        margin: 1rem 0;
+    }
+    .password-requirements ul {
+        margin-bottom: 0;
+        padding-left: 1.2rem;
+    }
+    .password-requirements li {
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+    .btn-register {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1.1rem;
+        background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+        border: none;
+        transition: transform 0.2s;
+    }
+    .btn-register:hover {
+        transform: translateY(-1px);
+    }
+    .login-link {
+        text-align: center;
+        margin-top: 1.5rem;
+    }
+    .login-link a {
+        color: #4a90e2;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .login-link a:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card bg-white">
+        <div class="auth-header">
+            <img src="{% static 'images/logo.png' %}" alt="EventPlan Logo" height="50" class="mb-3">
+            <h1 class="h3 mb-0">Create Account</h1>
+        </div>
+        <div class="auth-body">
+            <form method="post" id="registerForm">
+                {% csrf_token %}
+                <div class="form-floating">
+                    <input type="text" name="username" class="form-control" id="username" placeholder="Username" required>
+                    <label for="username">Username</label>
+                    <div class="invalid-feedback" id="username-feedback"></div>
+                </div>
+                <div class="form-floating">
+                    <input type="email" name="email" class="form-control" id="email" placeholder="Email" required>
+                    <label for="email">Email</label>
+                </div>
+                <div class="form-floating">
+                    <input type="password" name="password1" class="form-control" id="password1" placeholder="Password" required>
+                    <label for="password1">Password</label>
+                </div>
+                <div class="password-requirements">
+                    <h6 class="mb-2">Password Requirements:</h6>
+                    <ul>
+                        <li>At least 8 characters long</li>
+                        <li>Cannot be too similar to your personal information</li>
+                        <li>Cannot be a commonly used password</li>
+                        <li>Cannot be entirely numeric</li>
+                    </ul>
+                </div>
+                <div class="form-floating">
+                    <input type="password" name="password2" class="form-control" id="password2" placeholder="Confirm Password" required>
+                    <label for="password2">Confirm Password</label>
+                </div>
+                {% if form.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <p class="mb-0">{{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <button type="submit" class="btn btn-primary btn-register">
+                    <i class="fas fa-user-plus me-2"></i> Create Account
+                </button>
+            </form>
+            <div class="login-link">
+                <p class="mb-0">Already have an account? <a href="{% url 'authentication:login' %}">Login here</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Registration Success Modal -->
+<div class="modal fade" id="registerSuccessModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Success!</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <i class="fas fa-check-circle text-success fa-3x mb-3"></i>
+                <p class="mb-0">Your account has been created successfully!</p>
+                <p class="text-muted">Redirecting to the dashboard...</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const registerForm = document.getElementById('registerForm');
+    const usernameInput = document.getElementById('username');
+    const usernameFeedback = document.getElementById('username-feedback');
+
+    // Username validation
+    let usernameTimeout;
+    usernameInput.addEventListener('input', function() {
+        clearTimeout(usernameTimeout);
+        usernameTimeout = setTimeout(() => {
+            fetch(`/auth/validate-username/?username=${this.value}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.is_taken) {
+                        usernameInput.classList.add('is-invalid');
+                        usernameFeedback.textContent = 'This username is already taken.';
+                    } else {
+                        usernameInput.classList.remove('is-invalid');
+                        usernameFeedback.textContent = '';
+                    }
+                });
+        }, 500);
+    });
+
+    // Form submission
+    registerForm.addEventListener('submit', function(e) {
+        const submitBtn = this.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating account...';
+    });
+
+    // Show success modal if registration was successful
+    if (window.location.search.includes('registered=success')) {
+        const modal = new bootstrap.Modal(document.getElementById('registerSuccessModal'));
+        modal.show();
+        setTimeout(() => {
+            window.location.href = '{% url "events:event_list" %}';
+        }, 2000);
+    }
+});
+</script>
+{% endblock %}
+

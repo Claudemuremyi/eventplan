@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+
+{% block extra_head %}
+<style>
+    .form-container {
+        max-width: 800px;
+        margin: 2rem auto;
+    }
+    
+    .form-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    }
+    
+    .form-header {
+        background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+        padding: 2rem;
+        border-radius: 15px 15px 0 0;
+        color: white;
+    }
+    
+    .form-body {
+        padding: 2rem;
+    }
+    
+    .form-section {
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .form-section:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+    
+    .form-floating {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-floating > label {
+        opacity: 0.65;
+    }
+    
+    .form-control:focus {
+        border-color: #4a90e2;
+        box-shadow: 0 0 0 0.25rem rgba(74, 144, 226, 0.25);
+    }
+    
+    .form-check {
+        padding: 1rem;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        transition: all 0.2s;
+    }
+    
+    .form-check:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .form-check-input:checked {
+        background-color: #4a90e2;
+        border-color: #4a90e2;
+    }
+    
+    .form-check-label {
+        font-weight: 500;
+        color: #495057;
+    }
+    
+    .btn-submit {
+        padding: 0.8rem 2rem;
+        font-size: 1.1rem;
+        background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+        border: none;
+        transition: transform 0.2s;
+    }
+    
+    .btn-submit:hover {
+        transform: translateY(-1px);
+    }
+    
+    .btn-cancel {
+        padding: 0.8rem 2rem;
+        font-size: 1.1rem;
+    }
+    
+    .required-field::after {
+        content: "*";
+        color: #dc3545;
+        margin-left: 4px;
+    }
+    
+    @media (max-width: 768px) {
+        .form-container {
+            margin: 1rem;
+        }
+        
+        .form-header,
+        .form-body {
+            padding: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <h1 class="h3 mb-0">{% if form.instance.pk %}Edit Event{% else %}Create New Event{% endif %}</h1>
+            <p class="mb-0 mt-2 text-white-50">Fill in the details below to {% if form.instance.pk %}update{% else %}create{% endif %} your event</p>
+        </div>
+        <div class="form-body">
+            <form method="post" class="needs-validation" novalidate>
+                {% csrf_token %}
+                
+                <!-- Basic Information Section -->
+                <div class="form-section">
+                    <h5 class="mb-4">Basic Information</h5>
+                    
+                    <div class="form-floating">
+                        <input type="text" name="name" class="form-control" id="id_name" placeholder="Event Name" required 
+                               value="{{ form.name.value|default:'' }}">
+                        <label for="id_name" class="required-field">Event Name</label>
+                        {% if form.name.errors %}
+                            <div class="invalid-feedback">{{ form.name.errors|join:", " }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-floating">
+                        <input type="datetime-local" name="date" class="form-control" id="id_date" required
+                               value="{{ form.date.value|date:'Y-m-d\TH:i' }}">
+                        <label for="id_date" class="required-field">Date and Time</label>
+                        {% if form.date.errors %}
+                            <div class="invalid-feedback">{{ form.date.errors|join:", " }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-floating">
+                        <textarea class="form-control" name="description" id="id_description" style="height: 150px" 
+                                  placeholder="Description" required>{{ form.description.value|default:'' }}</textarea>
+                        <label for="id_description" class="required-field">Description</label>
+                        {% if form.description.errors %}
+                            <div class="invalid-feedback">{{ form.description.errors|join:", " }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Event Details Section -->
+                <div class="form-section">
+                    <h5 class="mb-4">Event Details</h5>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <select class="form-select" name="category" id="id_category" required>
+                                    <option value="">Select a category</option>
+                                    {% for value, label in form.fields.category.choices %}
+                                        <option value="{{ value }}" {% if form.category.value == value %}selected{% endif %}>
+                                            {{ label }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <label for="id_category" class="required-field">Category</label>
+                                {% if form.category.errors %}
+                                    <div class="invalid-feedback">{{ form.category.errors|join:", " }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <select class="form-select" name="mode" id="id_mode" required>
+                                    <option value="">Select a mode</option>
+                                    {% for value, label in form.fields.mode.choices %}
+                                        <option value="{{ value }}" {% if form.mode.value == value %}selected{% endif %}>
+                                            {{ label }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <label for="id_mode" class="required-field">Mode</label>
+                                {% if form.mode.errors %}
+                                    <div class="invalid-feedback">{{ form.mode.errors|join:", " }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-floating mt-3">
+                        <input type="text" name="location" class="form-control" id="id_location" 
+                               placeholder="Location" required value="{{ form.location.value|default:'' }}">
+                        <label for="id_location" class="required-field">Location</label>
+                        {% if form.location.errors %}
+                            <div class="invalid-feedback">{{ form.location.errors|join:", " }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Event Status Section -->
+                <div class="form-section">
+                    <h5 class="mb-4">Event Status</h5>
+                    
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="is_urgent" id="id_is_urgent"
+                               {% if form.is_urgent.value %}checked{% endif %}>
+                        <label class="form-check-label" for="id_is_urgent">
+                            Mark as Urgent
+                            <small class="d-block text-muted">This event requires immediate attention</small>
+                        </label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="is_approaching" id="id_is_approaching"
+                               {% if form.is_approaching.value %}checked{% endif %}>
+                        <label class="form-check-label" for="id_is_approaching">
+                            Mark as Approaching
+                            <small class="d-block text-muted">This event is coming up soon</small>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="d-flex gap-3 justify-content-end mt-4">
+                    <a href="{% url 'events:event_list' %}" class="btn btn-light btn-cancel">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-submit">
+                        <i class="fas fa-save me-2"></i>
+                        {% if form.instance.pk %}Update Event{% else %}Create Event{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Form validation
+    const forms = document.querySelectorAll('.needs-validation');
+    
+    Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+
+    // Auto-expand textarea
+    const textarea = document.getElementById('id_description');
+    textarea.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+    });
+});
+</script>
+{% endblock %}
+
