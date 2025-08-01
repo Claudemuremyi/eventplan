@@ -4,16 +4,16 @@ EventPlan is a comprehensive event management system built with Django that allo
 
 ## Features
 
-🔐 User Authentication (Register, Login, Logout)
-📊 Interactive Dashboard with Charts
-📅 Event Management (Create, Read, Update, Delete)
-🔍 Advanced Search Functionality
-📱 Responsive Design
-📊 Data Visualization using Chart.js
-🏷️ Event Categorization
-📍 Multiple Event Modes (In-Person, Online, etc.)
-⏰ Event Status Tracking (Urgent, Approaching)
-📈 Statistics and Analytics
+-🔐 User Authentication (Register, Login, Logout)
+-📊 Interactive Dashboard with Charts
+-📅 Event Management (Create, Read, Update, Delete)
+-🔍 Advanced Search Functionality
+-📱 Responsive Design
+-📊 Data Visualization using Chart.js
+-🏷️ Event Categorization
+-📍 Multiple Event Modes (In-Person, Online, etc.)
+-⏰ Event Status Tracking (Urgent, Approaching)
+-📈 Statistics and Analytics
 
 ## Prerequisites
 
